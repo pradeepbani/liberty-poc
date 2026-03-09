@@ -12,23 +12,23 @@ pipeline {
         stage('Build WAR') {
             steps {
                 echo 'Building WAR file with Maven...'
-                bat 'mvn clean package'
+                sh 'mvn clean package'
             }
         }
         
         stage('Build Docker Image') {
             steps {
                 echo 'Building Docker image...'
-                bat 'docker build -t liberty-poc .'
+                sh 'docker build -t liberty-poc .'
             }
         }
         
         stage('Deploy Container') {
             steps {
                 echo 'Deploying container...'
-                bat 'docker stop liberty-app || true'
-                bat 'docker rm liberty-app || true'
-                bat 'docker run -d -p 9080:9080 --name liberty-app liberty-poc'
+                sh 'docker stop liberty-app || true'
+                sh 'docker rm liberty-app || true'
+                sh 'docker run -d -p 9080:9080 --name liberty-app liberty-poc'
             }
         }
     }
