@@ -1,0 +1,36 @@
+---
+- name: Deploy Liberty POC with Docker Compose
+  hosts: local
+  become: false
+
+  vars:
+    project_dir: /mnt/d/DevOps/Projects/liberty-poc
+
+  tasks:
+    - name: Stop existing containers
+      command: docker-compose down
+      args:
+        chdir: "{{ project_dir }}"
+      ignore_errors: yes
+
+    - name: Build latest Docker image
+      command: docker build -t liberty-poc .
+      args:
+        chdir: "{{ project_dir }}"
+
+    - name: Start containers with Docker Compose
+      command: docker-compose up -d
+      args:
+        chdir: "{{ project_dir }}"
+
+    - name: Verify Liberty app is running
+      command: docker ps --filter "name=liberty-app" --format {% raw %}"{{.Status}}"{% endraw %}
+      register: app_status
+
+    - name: Print app status
+      debug:
+        msg: "Liberty app status: {{ app_status.stdout }}"
+
+    - name: Print app status
+      debug:
+        msg: "Liberty app status: {{ app_status.stdout }}"
